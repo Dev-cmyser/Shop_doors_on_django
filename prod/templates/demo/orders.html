@@ -1,0 +1,51 @@
+{% extends "index.html" %}
+{% block content %}
+
+    <div class="popular"
+         >
+        <div class="container">
+            <div class="row popular-title">
+                <h2>Заказы</h2>
+            </div>
+            </div>
+            <div class=" ">
+                {% if order_list %}
+       
+            {% for order, total in order_list %}
+            <div class="order_list" style="background-image: url(files/background.jpg">
+                    <h2>Номер заказа: {{ order.id }}</h2>
+                     <h4>Дата заказа: {{ order.date }}</h4>
+                    <div class="" style="display: flex; align-items: center;" >
+                    <h4 style="margin-right:30px">Статус заказа: {{ order.status }}</h4>
+                    {% if order.status == 'new' %}
+                        <a class="btn" href="{% url 'delete_order' order.pk %}">Удалить заказ</a>
+                    {% endif %}
+                    </div>
+                    {% if order.iteminorder_set.all %}
+                        
+                            {% for item in order.iteminorder_set.all %}
+                            <div class="" style="display: flex; align-items: center; margin-left:50px" >
+                                {{ item.product.name }}:  Количество: {{ item.count }};  Стоимость: {{ item.price }}
+                            </div>
+                            {% endfor %}
+                        
+                    {% endif %}
+                    <h2>Общая стоимость: {{ total }} </h2>
+                    <a class="btn" href="{% url 'delete_order' order.pk %}">Оплатить заказ</a>
+                </div>
+            {% endfor %}
+        
+    {% else %}
+        <p>Нет заказов</p>
+    {% endif %}
+                
+                    
+                    
+                        
+                    
+                
+            </div>
+        </div>
+    </div>
+    
+{% endblock %}

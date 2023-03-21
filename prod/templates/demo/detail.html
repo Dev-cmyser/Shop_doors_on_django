@@ -1,0 +1,50 @@
+{% extends "index.html" %}
+{% block content %}
+    <div class="popular"
+         style="background-image: url(files/{{ background.jpg }})">
+        <div class="container">
+            <div class="row popular-title">
+                <h2>{{ product.name }}</h2>
+            </div>
+            </div>
+            <div class="row popular-goods catalog" style="display: flex;
+            justify-content: space-around;">
+                
+                    {% comment %} <img src="files/{{ product.photo_file }}" alt="" style="height: 300px;">
+                        <b>{{ product.name }}</b> {{ product.price }} р. (Остаток: {{ product.count }})
+                    {% if user.is_authenticated %}<a href="#" onclick="toCart(this, {{ product.pk }})">В корзину</a>{% endif %} {% endcomment %}
+                    <div class="product_my" style="display: flex; flex-direction:row;" data-order="58000">
+                        <img class="product_img" style="    height: 600px;
+                        width: 400px;" src="/files/{{ product.photo_file }}" alt="Название">
+                        <div class="" style="display: flex; flex-direction:column; margin-left: 40px; align-items:center;">
+                            <h3 style="display: flex; wigth: 100px;">{{ product.name }}</h3>
+                        <div>{{ product.price }} &#8381;</div>
+                        <div class="product_btns">
+                            
+                            {% if user.is_authenticated %}<a href="##" class="btn" onclick="toCart(this, {{ product.pk }})">Добавить</a>{% endif %}
+                            {% comment %} <a href="door.html" class="btn">Подробнее</a> {% endcomment %}
+                        </div>
+                        </div>
+                        
+                    </div>
+                
+            </div>
+        </div>
+    </div>
+    <script>
+    toCart = async (target, pk) => {
+        const res = await fetch(`/to_cart/${pk}`).then(res => res.json());
+        let message = document.createElement('div');
+        const message2 = document.getElementById(`Message${pk}`);
+        if (res.count) {
+            message = 'Добавлено! В корзине: ' + res.count;
+        } else {
+            message = 'Нет на складе!';
+        }
+        
+        target.innerHTML = message;
+        setTimeout(() => target.innerHTML = "В корзину", 800);
+        
+    }
+    </script>
+{% endblock %}

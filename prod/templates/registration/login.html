@@ -1,0 +1,39 @@
+{% extends "index.html" %}
+{% block content %}
+<div class="popular">
+    <div class="container">
+        <div class="row popular-title">
+            <h2>Вход</h2>
+        </div>
+    </div>
+    <div class=" ">
+            {% if form.errors %}
+            <div class="alert-danger">
+                <p class="p-1">Не правильный логин или пароль</p>
+            </div>
+        {% endif %}
+        {% if user.is_authenticated %}
+        <p>Вы уже авторизованы <a href="{% url 'logout' %}">Выйти</a></p>
+        {% else %}
+
+        <form style="display: flex; flex-direction: column; align-items: center; margin-top:50px;" method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">{{ form.username.label_tag }}</label>
+            <div class="form-input_m">
+                {{ form.username }}
+            </div>
+            
+            </div>
+            <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">{{ form.password.label_tag }}</label>
+                <div class="form-input_m">
+                    {{ form.password }}
+                </div>
+        </div>
+            <input class="btn" type="submit" value="Войти">
+            <input type="hidden" name="next" value="{{ next }}">
+        </form>
+        {% endif %}
+    </div>
+{% endblock %}

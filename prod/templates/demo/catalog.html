@@ -1,0 +1,66 @@
+{% extends "index.html" %}
+{% block content %}
+    <div class="popular"
+         >
+        <div class="container">
+            <div class="row popular-title">
+                <h2>Каталог</h2>
+            </div>
+            <div class="category-controll text-center">
+                {% if not request.GET.category %}
+                    <a class="btn" >Все</a>
+                {% else %}
+                <a class="btn" href="{% url 'catalog' %}?order_by={{ request.GET.order_by }}" data-filter="all">Все</a>
+
+                {% endif %}
+
+                {% for i in category %}
+                    <a class="btn" href="{% url 'catalog' %}?category={{ i.pk }}&order_by={{ request.GET.order_by }}" data-filter="all">{{ i.name}}</a>
+                {% endfor %}
+                {% if not request.GET.order_by %}
+                    <a class="btn" >Cбросить </a>
+                {% else %}
+                <a class="btn" href="{% url 'catalog' %}?category={{ request.GET.category }}" data-filter="all">Cбросить </a>
+
+                {% endif %}
+                <a class="btn" href="{% url 'catalog' %}?order_by=name&category={{ request.GET.category }}" data-filter="all">По имени</a>
+                <a class="btn" href="{% url 'catalog' %}?order_by=year&category={{ request.GET.category }}" data-filter="all">По году производства</a>
+                <a class="btn" href="{% url 'catalog' %}?order_by=price&category={{ request.GET.category }}" data-filter="all">По цене</a>
+
+            </div>
+            <div class="row popular-goods catalog">
+                {% for item in products %}
+                    {% comment %} <img src="files/{{ item.photo_file }}" alt="" style="height: 300px;">
+                        <b>{{ item.name }}</b> {{ item.price }} р. (Остаток: {{ item.count }})
+                    {% if user.is_authenticated %}<a href="#" onclick="toCart(this, {{ item.pk }})">В корзину</a>{% endif %} {% endcomment %}
+                    <div class="product_my" data-order="58000">
+                        <img class="product_img" src="files/{{ item.photo_file }}" alt="Название">
+                        <h3>{{ item.name }}</h3>
+                        <div>{{ item.price }} &#8381;</div>
+                        <div class="product_btns">
+                            
+                            {% if user.is_authenticated %}<a href="##" class="btn" onclick="toCart(this, {{ item.pk }})">Добавить</a>{% endif %}
+                            <a href="detail/{{ item.id }}" class="btn">Подробнее</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <script>
+    toCart = async (target, pk) => {
+        const res = await fetch(`/to_cart/${pk}`).then(res => res.json());
+        let message = document.createElement('div');
+        const message2 = document.getElementById(`Message${pk}`);
+        if (res.count) {
+            message = 'Добавлено! В корзине: ' + res.count;
+        } else {
+            message = 'Нет на складе!';
+        }
+        
+        target.innerHTML = message;
+        setTimeout(() => target.innerHTML = "В корзину", 800);
+        
+    }
+    </script>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends "index.html" %}
+{% block content %}
+<div class="popular">
+    <div class="container">
+        <div class="row popular-title">
+            <h2>Корзина</h2>
+        </div>
+        </div>
+        <div class=" ">
+         {% if cart_items %}
+            {% for item in cart_items %}
+            <div class="order_list" style="background-image: url(files/background.jpg); ">
+                    <h2>Товар: {{ item.product.name }}</h2>
+                    
+                    <h4>Количество: <span>{{ item.count }}</span></h4>
+                    <h4>Цена за штуку: {{ item.product.price }}</h4>
+                    <button class="btn" onclick="toCart(this,{{ item.product.pk }})">+</button>
+                    <button class="btn" onclick="remoteFromCart(this,{{ item.pk }})">-</button>
+               
+            </div>
+            {% endfor %}
+        </ul>
+        
+        <div style="display: flex; flex-direction: column; align-items: center; margin-top:50px;">
+            <input class="form-input_m" type="password" value="" name="password" placeholder="Подтвердите ваш пароль">
+            <button style="margin-top:30px; width: 100%;" class="btn" id="by_order">Сформировать заказ</button>
+           </div>
+        {% else %}
+        <p>Корзина пуста</p>
+        {% endif %}
+
+
+
+
+
+    <script>
+        document.querySelector('#by_order').addEventListener('click', async (event) => {
+            const password = document.querySelector('input').value;
+            const res = await fetch(`/checkout?password=${password}`).then(res => res.json());
+            if (res.error) {
+                const message = document.createElement('div');
+                message.innerHTML = res.error;
+                event.target.parentElement.prepend(message);
+                setTimeout(() => message.remove(), 1000);
+            } else {
+                location.href = '/orders';
+            }
+        })
+toCart = async (target, pk) => {
+    const res = await fetch(`/to_cart/${pk}`).then(res => res.json());
+    if (res.count) {
+        target.parentElement.querySelector('span').innerHTML = res.count;
+    }
+}
+remoteFromCart = async (target, pk) => {
+    const res = await fetch(`/remove_from_cart/${pk}`).then(res => res.json());
+    if (res.count) {
+        target.parentElement.querySelector('span').innerHTML = res.count;
+    } else {
+    target.parentElement.remove();
+    }
+}
+    </script>
+{% endblock %}
